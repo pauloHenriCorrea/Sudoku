@@ -57,7 +57,7 @@ int main() {
  * Inicializa o SUDOKU a partir de um novo jogo ou estado de jogo anterior
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  */
-FILE* carregue(char quadro[9][9]) {
+FILE * carregue(char quadro[9][9]) {
 	int opcao;
 
 	menu_arquivo();
@@ -81,6 +81,7 @@ FILE* carregue(char quadro[9][9]) {
 
 		default:
 			break;
+	}
 }
 
 /* -----------------------------------------------------------------------------
@@ -88,7 +89,7 @@ FILE* carregue(char quadro[9][9]) {
  * Carrega um estado de jogo a partir de um arquivo binario
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  */
-FILE* carregue_continue_jogo (char quadro[9][9], char *nome_arquivo) {
+FILE * carregue_continue_jogo (char quadro[9][9], char *nome_arquivo){
 	// TODO
 }
 
