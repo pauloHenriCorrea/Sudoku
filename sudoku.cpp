@@ -56,7 +56,7 @@ int main() {
  * Inicializa o SUDOKU a partir de um novo jogo ou estado de jogo anterior
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  */
-FILE* carregue(char quadro[9][9]) {
+FILE * carregue(char quadro[9][9]) {
 	int opcao;
 
 	menu_arquivo();
@@ -66,26 +66,32 @@ FILE* carregue(char quadro[9][9]) {
 	switch(opcao) {
 
 		// carregar novo sudoku
+		FILE * fp;
+		char url[20]; 
 		case 1:
-			FILE * fp;
-
-			char url[20]; 
 			scanf("%s", url);
-
-			// abre o arquivo.txt
-			fp = fopen(url, "r");
+			// abre um novo arquivo.txt
+			fp = fopen(url, "w");
 			return fp;
+			
 			break;
 
 		// continuar jogo
 		case 2:
+			scanf("%s", url);
+			// abre o arquivo binario já existente
+			fp = fopen(url, "rb");
+			return fp;
 			break;
 
 		// retornar ao menu anterior
 		case 9:
+			return fp;
 			break;
 
 		default:
+			printf("Opcao Invalida!\n\n");
+			return carregue(quadro);
 			break;
 	}
 }
