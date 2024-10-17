@@ -45,7 +45,6 @@ void menu_arquivo();
  * /////////////////////////////////////////////////////////////////////////////
  */
 int main() {
-
 	// inicia o jogo
 	jogue();
 
@@ -57,18 +56,25 @@ int main() {
  * Inicializa o SUDOKU a partir de um novo jogo ou estado de jogo anterior
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  */
-FILE * carregue(char quadro[9][9]) {
+FILE* carregue(char quadro[9][9]) {
 	int opcao;
 
 	menu_arquivo();
 	opcao = leia_opcao();
 
 	// TODO Função incompleta
-
 	switch(opcao) {
 
 		// carregar novo sudoku
 		case 1:
+			FILE * fp;
+
+			char url[20]; 
+			scanf("%s", url);
+
+			// abre o arquivo.txt
+			fp = fopen(url, "r");
+			return fp;
 			break;
 
 		// continuar jogo
@@ -89,7 +95,7 @@ FILE * carregue(char quadro[9][9]) {
  * Carrega um estado de jogo a partir de um arquivo binario
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  */
-FILE * carregue_continue_jogo (char quadro[9][9], char *nome_arquivo){
+FILE* carregue_continue_jogo (char quadro[9][9], char *nome_arquivo) {
 	// TODO
 }
 
@@ -108,7 +114,9 @@ void carregue_novo_jogo(char quadro[9][9], char *nome_arquivo) {
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  */
 FILE* crie_arquivo_binario(char quadro[9][9]) {
-	// TODO
+	FILE *fp;
+
+	return fp;
 }
 
 /* -----------------------------------------------------------------------------
@@ -209,14 +217,14 @@ void imprima(const char quadro[9][9]) {
 	int i, j;
 
 //	puts("~~~~~~~~ SUDOKU ~~~~~~~~");
-	puts("    1 2 3   4 5 6   7 8 9");
+	puts("    0 1 2   3 4 5   6 7 8");
 	for (i = 0; i < 9; i++) {
 		if (i % 3 == 0)
 			puts("  -------------------------");
 		for (j = 0; j < 9; j++) {
 
 			if (j == 0)
-				printf("%d | ", i+1);
+				printf("%d | ", i);
 			else if (j % 3 == 0)
 				printf("| ");
 
@@ -237,7 +245,8 @@ void imprima(const char quadro[9][9]) {
  */
 void jogue() {
 	int opcao;
-	char quadro[9][9] = { {0, 0, 0, 0, 0, 0, 0, 0, 0},
+	char quadro[9][9] = { 
+			{0, 0, 0, 0, 0, 0, 0, 0, 0},
 			{0, 0, 0, 0, 0, 0, 0, 0, 0},
 			{0, 0, 0, 0, 0, 0, 0, 0, 0},
 			{0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -429,7 +438,7 @@ int ini_x(int quadr) {
 			return 3;
 
 		default:
-			return 7;
+			return 6;
 	}
 }
 
@@ -451,7 +460,7 @@ int ini_y(int quadr) {
 			return 3;
 
 		default:
-			return 7;
+			return 6;
 	}
 }
 
