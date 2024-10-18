@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <string.h>
 
 /* Constantes */
 #define ERROR_FILE_MSG	"Nao foi possivel abrir o arquivo!\n"
@@ -59,43 +60,54 @@ int main() {
  * REVIZAR ESTÁ FUNÇÃO PARA VER SE ESTÁ FUNCIONANDO CORRETAMENTE
  */
 FILE * carregue(char quadro[9][9]) {
+	char url[50] = "exemplos_teste/", file_name[20]; 
+	FILE * f = NULL;
 	int opcao;
 
 	menu_arquivo();
 	opcao = leia_opcao();
 
-	FILE * fp;
 	switch(opcao) {
 
 		// carregar novo sudoku
-		char url[20]; 
 		case 1:
-			scanf("%s", url);
+			printf("Digite o nome do arquivo de jogo (.txt): ");
+			scanf("%s", file_name);
+			strcat(url,file_name);
+
 			// abre um novo arquivo.txt
-			fp = fopen(url, "w");
-			return fp;
-			
+			f = fopen(url, "r");
+			if (f == NULL) {
+				printf(ERROR_FILE_MSG);
+			} else {
+				for (int i = 0; i < 9; i++) {
+                    for (int j = 0; j < 9; j++) {
+                        fscanf(f, "%d", (int *) &quadro[i][j]);
+                    }
+                }
+				fclose(f);
+			}
 			break;
 
 		// continuar jogo
 		case 2:
+			printf("Digite o nome do arquivo binário salvo (.bin): ");
 			scanf("%s", url);
 			// abre o arquivo binario já existente
-			fp = fopen(url, "rb");
-			return fp;
+			f = fopen(url, "rb");
+			return f;
 			break;
 
 		// retornar ao menu anterior
 		case 9:
-			return fp;
-			break;
+			return f;
 
 		default:
 			printf(INVALID_OPTION);
 			return carregue(quadro);
 			break;
 	}
-	fclose(fp);
+	return f;
 }
 
 /* -----------------------------------------------------------------------------
@@ -122,12 +134,15 @@ void carregue_novo_jogo(char quadro[9][9], char *nome_arquivo) {
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  */
 FILE * crie_arquivo_binario(char quadro[9][9]) {
-	FILE * fp;
+	char url[30], address[50] = "binarios/";
+	gen_random(url, 30);
+	strcat(address, url);
 
+	FILE * fb = fopen(address, "wb");
+	
 	for(int i = 0; i < 9; i++) 
 		for(int j = 0; j < 9; j++)
-			fprintf(fp, "%d",quadro[i][j]);
-	return fp;
+			fwrite(quadro, sizeof(int), 81,fb);
 }
 
 /* -----------------------------------------------------------------------------
@@ -180,9 +195,10 @@ int eh_valido(const char quadro[9][9], int x, int y, int valor) {
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  */
 int eh_valido_na_coluna(const char quadro[9][9], int y, int valor) {
-	for(int c = 0; c < 9; c++)
-		if(quadro[0][c] == y) 
-			return FALSO;
+	for(int i = 0; i < 8; i++)
+		for(int c = 0; c < 9; c++)
+			if(quadro[i][c] == y) 
+				return FALSO;
 	return VERDADEIRO;
 }
 
@@ -204,11 +220,78 @@ int eh_valido_na_linha(const char quadro[9][9], int x, int valor) {
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  */
 int eh_valido_no_quadrante3x3(const char quadro[9][9], int x, int y, int valor) {
+	// 1° quadrante
 	for(int l = 0; l < 3; l++)
 		for(int c = 0; c < 3; c++)
 			if(quadro[l][c] == quadro[x][y])
 				return FALSO;
 	return VERDADEIRO;
+
+	
+	// 2° quadrante
+	for(int l = 0; l < 3; l++)
+		for(int c = 3; c < 6; c++)
+			if(quadro[l][c] == quadro[x][y])
+				return FALSO;
+	return VERDADEIRO;
+
+	
+	// 3° quadrante
+	for(int l = 0; l < 3; l++)
+		for(int c = 6; c < 9; c++)
+			if(quadro[l][c] == quadro[x][y])
+				return FALSO;
+	return VERDADEIRO;
+
+	
+	// 4° quadrante
+	for(int l = 3; l < 6; l++)
+		for(int c = 0; c < 3; c++)
+			if(quadro[l][c] == quadro[x][y])
+				return FALSO;
+	return VERDADEIRO;
+
+	
+	// 5° quadrante
+	for(int l = 3; l < 6; l++)
+		for(int c = 3; c < 6; c++)
+			if(quadro[l][c] == quadro[x][y])
+				return FALSO;
+	return VERDADEIRO;
+
+	
+	// 6° quadrante
+	for(int l = 3; l < 6; l++)
+		for(int c = 6; c < 9; c++)
+			if(quadro[l][c] == quadro[x][y])
+				return FALSO;
+	return VERDADEIRO;
+
+	
+	// 7° quadrante
+	for(int l = 6; l < 9; l++)
+		for(int c = 0; c < 3; c++)
+			if(quadro[l][c] == quadro[x][y])
+				return FALSO;
+	return VERDADEIRO;
+
+	
+	// 8° quadrante
+	for(int l = 6; l < 9; l++)
+		for(int c = 3; c < 6; c++)
+			if(quadro[l][c] == quadro[x][y])
+				return FALSO;
+	return VERDADEIRO;
+
+	
+	// 9° quadrante
+	for(int l = 6; l < 9; l++)
+		for(int c = 6; c < 9; c++)
+			if(quadro[l][c] == quadro[x][y])
+				return FALSO;
+	return VERDADEIRO;
+
+	
 }
 
 /* -----------------------------------------------------------------------------
@@ -294,7 +377,6 @@ void jogue() {
 		// carregue sudoku
 		case 1:
 			fb = carregue(quadro);
-
 			if (fb == NULL) {
 				fb = crie_arquivo_binario(quadro);
 			}
@@ -339,7 +421,6 @@ void jogue() {
 			break;
 		}
 	}
-	fclose(fb);
 }
 
 /* -----------------------------------------------------------------------------
