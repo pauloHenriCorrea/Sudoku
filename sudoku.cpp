@@ -51,10 +51,12 @@ int main() {
 	return 0;
 }
 
+
 /* -----------------------------------------------------------------------------
  * CARREGAR
  * Inicializa o SUDOKU a partir de um novo jogo ou estado de jogo anterior
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ * REVIZAR ESTÁ FUNÇÃO PARA VER SE ESTÁ FUNCIONANDO CORRETAMENTE
  */
 FILE * carregue(char quadro[9][9]) {
 	int opcao;
@@ -119,9 +121,12 @@ void carregue_novo_jogo(char quadro[9][9], char *nome_arquivo) {
  * Criar arquivo binario
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  */
-FILE* crie_arquivo_binario(char quadro[9][9]) {
-	FILE *fp;
+FILE * crie_arquivo_binario(char quadro[9][9]) {
+	FILE * fp;
 
+	for(int i = 0; i < 9; i++) 
+		for(int j = 0; j < 9; j++)
+			fprintf(fp, "%d",quadro[i][j]);
 	return fp;
 }
 
@@ -175,7 +180,10 @@ int eh_valido(const char quadro[9][9], int x, int y, int valor) {
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  */
 int eh_valido_na_coluna(const char quadro[9][9], int y, int valor) {
-	// TODO
+	for(int c = 0; c < 9; c++)
+		if(quadro[0][c] == y) 
+			return FALSO;
+	return VERDADEIRO;
 }
 
 /* -----------------------------------------------------------------------------
@@ -184,7 +192,10 @@ int eh_valido_na_coluna(const char quadro[9][9], int y, int valor) {
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  */
 int eh_valido_na_linha(const char quadro[9][9], int x, int valor) {
-	// TODO
+	for(int l = 0; l < 9; l++)
+		if(quadro[l][0] == x) 
+			return FALSO;
+	return VERDADEIRO;
 }
 
 /* -----------------------------------------------------------------------------
@@ -193,7 +204,11 @@ int eh_valido_na_linha(const char quadro[9][9], int x, int valor) {
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  */
 int eh_valido_no_quadrante3x3(const char quadro[9][9], int x, int y, int valor) {
-	// TODO
+	for(int l = 0; l < 3; l++)
+		for(int c = 0; c < 3; c++)
+			if(quadro[l][c] == quadro[x][y])
+				return FALSO;
+	return VERDADEIRO;
 }
 
 /* -----------------------------------------------------------------------------
