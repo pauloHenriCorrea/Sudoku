@@ -64,11 +64,10 @@ FILE * carregue(char quadro[9][9]) {
 	menu_arquivo();
 	opcao = leia_opcao();
 
-	// TODO Função incompleta
+	FILE * fp;
 	switch(opcao) {
 
 		// carregar novo sudoku
-		FILE * fp;
 		char url[20]; 
 		case 1:
 			scanf("%s", url);
@@ -92,10 +91,11 @@ FILE * carregue(char quadro[9][9]) {
 			break;
 
 		default:
-			printf("Opcao Invalida!\n\n");
+			printf(INVALID_OPTION);
 			return carregue(quadro);
 			break;
 	}
+	fclose(fp);
 }
 
 /* -----------------------------------------------------------------------------
@@ -103,7 +103,7 @@ FILE * carregue(char quadro[9][9]) {
  * Carrega um estado de jogo a partir de um arquivo binario
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  */
-FILE* carregue_continue_jogo (char quadro[9][9], char *nome_arquivo) {
+FILE * carregue_continue_jogo (char quadro[9][9], char *nome_arquivo) {
 	// TODO
 }
 
@@ -277,7 +277,7 @@ void jogue() {
 			{0, 0, 0, 0, 0, 0, 0, 0, 0},
 			{0, 0, 0, 0, 0, 0, 0, 0, 0}
 	};
-	FILE *fb = NULL;
+	FILE * fb = NULL;
 
 	opcao = 0;
 
@@ -298,6 +298,7 @@ void jogue() {
 			if (fb == NULL) {
 				fb = crie_arquivo_binario(quadro);
 			}
+			
 			break;
 
 		// preencha quadro com um valor
@@ -338,6 +339,7 @@ void jogue() {
 			break;
 		}
 	}
+	fclose(fb);
 }
 
 /* -----------------------------------------------------------------------------
@@ -382,8 +384,8 @@ void salve_jogada_bin (FILE *fb, char quadro[9][9]) {
  * Indice final da linha para o quadrante recebido como parametro
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  */
-int fim_x(int quadr) {
-	switch(quadr) {
+int fim_x(int quadro) {
+	switch(quadro) {
 		case 1:
 		case 2:
 		case 3:
@@ -404,8 +406,8 @@ int fim_x(int quadr) {
  * Indice final da coluna para o quadrante recebido como parametro
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  */
-int fim_y(int quadr) {
-	switch(quadr) {
+int fim_y(int quadro) {
+	switch(quadro) {
 		case 1:
 		case 4:
 		case 7:
@@ -446,8 +448,8 @@ void gen_random(char *s, const int len) {
  * Indice inicial da linha para o quadrante recebido como parametro
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  */
-int ini_x(int quadr) {
-	switch(quadr) {
+int ini_x(int quadro) {
+	switch(quadro) {
 		case 1:
 		case 2:
 		case 3:
@@ -468,8 +470,8 @@ int ini_x(int quadr) {
  * Indice inicial da coluna para o quadrante recebido como parametro
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  */
-int ini_y(int quadr) {
-	switch(quadr) {
+int ini_y(int quadro) {
+	switch(quadro) {
 		case 1:
 		case 4:
 		case 7:
