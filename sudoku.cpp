@@ -62,8 +62,7 @@ int main()
  */
 FILE *carregue(char quadro[9][9])
 {
-	char url[50] = "exemplos_teste/", file_name[20];
-	char url2[50] = "binarios/", file_name2[20];
+	char url[50] = "exemplos_teste/", file_name[20], url2[50] = "binarios/", file_name2[20];
 	FILE *f = NULL;
 	int opcao;
 
@@ -106,7 +105,10 @@ FILE *carregue(char quadro[9][9])
 		strcat(url2, file_name2);
 
 		// abre o arquivo binario já existente
+		printf("\n%p\n", f);
 		f = fopen(url2, "rb");
+		printf("\n%p\n", f);
+		printf("\n%s\n", url2);
 		if (f == NULL)
 		{
 			printf(ERROR_FILE_MSG);
@@ -114,7 +116,7 @@ FILE *carregue(char quadro[9][9])
 		else
 		{
 			// ler o estado salvo do jogo do arquivo binario
-			fread(quadro, sizeof(char), 9 * 9, f);
+			fread(quadro, sizeof(char), 81, f);
 			fclose(f);
 		}
 		break;
@@ -384,7 +386,6 @@ void jogue()
 		// carregue sudoku
 		case 1:
 			fb = carregue(quadro);
-			printf("\n%p\n", fb);
 			if (fb == NULL)
 				fb = crie_arquivo_binario(quadro);
 
