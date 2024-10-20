@@ -234,8 +234,7 @@ int eh_valido(const char quadro[9][9], int x, int y, int valor)
 int eh_valido_na_coluna(const char quadro[9][9], int y, int valor)
 {
 	for (int i = 0; i < 8; i++)
-		for (int c = 0; c < 9; c++)
-			if (quadro[i][c] == y)
+		if (quadro[i][y] == valor)
 				return FALSO;
 	return VERDADEIRO;
 }
@@ -247,8 +246,8 @@ int eh_valido_na_coluna(const char quadro[9][9], int y, int valor)
  */
 int eh_valido_na_linha(const char quadro[9][9], int x, int valor)
 {
-	for (int l = 0; l < 9; l++)
-		if (quadro[l][0] == x)
+	for (int i = 0; i < 9; i++)
+		if (quadro[x][i] == valor)
 			return FALSO;
 	return VERDADEIRO;
 }
@@ -290,7 +289,7 @@ int eh_valido_no_quadrante3x3(const char quadro[9][9], int x, int y, int valor)
 	// Verefica se o determinado valor pode ser insiredo na posicao desejada
 	for (int l = aux_l_1; l < aux_l_2; l++)
 		for (int c = aux_c_1; c < aux_c_2; c++)
-			if (quadro[l][c] == quadro[x][y])
+			if (quadro[l][c] == valor)
 				return FALSO;
 	return VERDADEIRO;
 }
