@@ -261,7 +261,7 @@ int eh_valido_na_linha(const char quadro[9][9], int x, int valor)
 int eh_valido_no_quadrante3x3(const char quadro[9][9], int x, int y, int valor)
 {
 	int d_q = determine_quadrante(x, y);
-	int aux_l_1, aux_c_1, aux_l_2, aux_c_2, inicio_l = ini_x(d_q), inicio_c = ini_y(d_q), fim_l = fim_x(d_q), fim_c = fim_y(d_q);
+	int inicio_l = ini_x(d_q), inicio_c = ini_y(d_q), fim_l = fim_x(d_q), fim_c = fim_y(d_q);
 	// Verefica se o determinado valor pode ser insiredo na posicao desejada
 	for (int l = inicio_l; l <= fim_l; l++)
 		for (int c = inicio_c; c <= fim_c; c++)
