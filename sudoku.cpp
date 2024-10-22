@@ -90,9 +90,8 @@ FILE *carregue(char quadro[9][9])
 		strcat(url2, file_name2);
 
 		// abre o arquivo binario já existente
-		carregue_continue_jogo(quadro, url2);
-
-		break;
+		f = carregue_continue_jogo(quadro, url2);
+		return f;
 	// retornar ao menu anterior
 	case 9:
 		break;
@@ -121,9 +120,7 @@ FILE *carregue_continue_jogo(char quadro[9][9], char *nome_arquivo)
 	{
 		// ler o estado salvo do jogo do arquivo binario
 		fread(quadro, sizeof(char), 81, f);
-		fclose(f);
 	}
-
 	return f;
 }
 
@@ -150,7 +147,6 @@ void carregue_novo_jogo(char quadro[9][9], char *nome_arquivo)
 				fscanf(f, "%d", (int *)&quadro[i][j]);
 			}
 		}
-		fclose(f);
 	}
 }
 
@@ -165,7 +161,6 @@ FILE *crie_arquivo_binario(char quadro[9][9])
 	gen_random(url, 5);
 	strcat(address, url);
 	strcat(address, ".bin");
-	printf("\nArquivo salvo em: %s\n", address);
 
 	FILE *fb = fopen(address, "wb");
 
@@ -234,7 +229,7 @@ int eh_valido(const char quadro[9][9], int x, int y, int valor)
  */
 int eh_valido_na_coluna(const char quadro[9][9], int y, int valor)
 {
-	for (int i = 0; i < 8; i++)
+	for (int i = 0; i < 9; i++)
 		if (quadro[i][y] == valor)
 			return FALSO;
 	return VERDADEIRO;
@@ -361,6 +356,7 @@ void jogue()
 		// carregue sudoku
 		case 1:
 			fb = carregue(quadro);
+			printf("\n%p\n", fb);
 			if (fb == NULL)
 				fb = crie_arquivo_binario(quadro);
 
@@ -439,6 +435,8 @@ void resolve_um_passo(char quadro[9][9])
 void salve_jogada_bin(FILE *fb, char quadro[9][9])
 {
 	// TODOs
+	fseek(fb, 0,SEEK_SET);
+	fwrite(quadro, sizeof(char), 81, fb);
 }
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
