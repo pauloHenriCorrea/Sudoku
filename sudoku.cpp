@@ -60,6 +60,7 @@ int main()
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  * REVIZAR ESTÁ FUNÇÃO PARA VER SE ESTÁ FUNCIONANDO CORRETAMENTE
  */
+// FINALIZADO
 FILE *carregue(char quadro[9][9])
 {
 	char url[50] = "exemplos_teste/", file_name[20], url2[50] = "binarios/", file_name2[20];
@@ -74,6 +75,7 @@ FILE *carregue(char quadro[9][9])
 
 	// carregar novo sudoku
 	case 1:
+		// FINALIZADO
 		printf("Digite o nome do arquivo de jogo (.txt): ");
 		scanf("%s", file_name);
 		strcat(url, file_name);
@@ -85,6 +87,7 @@ FILE *carregue(char quadro[9][9])
 
 	// continuar jogo
 	case 2:
+		// FINALIZADO
 		printf("Digite o nome do arquivo binário salvo (.bin): ");
 		scanf("%s", file_name2);
 		strcat(url2, file_name2);
@@ -108,6 +111,8 @@ FILE *carregue(char quadro[9][9])
  * Carrega um estado de jogo a partir de um arquivo binario
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  */
+
+// FINALIZADO
 FILE *carregue_continue_jogo(char quadro[9][9], char *nome_arquivo)
 {
 	FILE *f;
@@ -129,25 +134,19 @@ FILE *carregue_continue_jogo(char quadro[9][9], char *nome_arquivo)
  * Carrega um novo jogo do Sudoku
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  */
+
+// FINALIZADO
 void carregue_novo_jogo(char quadro[9][9], char *nome_arquivo)
 {
 	// TODO
 	FILE *f;
 	f = fopen(nome_arquivo, "r");
 	if (f == NULL)
-	{
 		printf(ERROR_FILE_MSG);
-	}
 	else
-	{
 		for (int i = 0; i < 9; i++)
-		{
 			for (int j = 0; j < 9; j++)
-			{
 				fscanf(f, "%d", (int *)&quadro[i][j]);
-			}
-		}
-	}
 }
 
 /* -----------------------------------------------------------------------------
@@ -275,14 +274,9 @@ int existe_posicao_vazia(const char quadro[9][9])
 	int i, j;
 
 	for (i = 0; i < 9; i++)
-	{
 		for (j = 0; j < 9; j++)
-		{
 			if (quadro[i][j] == 0)
 				return VERDADEIRO;
-		}
-	}
-
 	return FALSO;
 }
 
@@ -355,8 +349,8 @@ void jogue()
 
 		// carregue sudoku
 		case 1:
+			// FINALIZADO
 			fb = carregue(quadro);
-			printf("\n%p\n", fb);
 			if (fb == NULL)
 				fb = crie_arquivo_binario(quadro);
 
@@ -425,6 +419,40 @@ void resolve_completo(FILE *fb, char quadro[9][9])
 void resolve_um_passo(char quadro[9][9])
 {
 	// TODO
+	for (int l = 0; l < 9; l++)
+	{
+		for (int c = 0; c < 9; c++)
+		{
+			// Os dois lacos acima é para percorrer todas as posicoes do quadro
+			/* m = Número de valores que podem ser inseridos
+			 * x, y, e v são variaveis auxiliares
+			 */
+
+			int m, v;
+			m = v = 0;
+			
+			if (quadro[l][c] == 0)
+			{
+				// Para verificar quais valores podem ser inseridos na posicao quadro[l][c]
+				for (int k = 1; k < 10; k++)
+				{
+					if (eh_valido(quadro, l, c, k))
+					{
+						m++;
+						v = k;
+					}
+
+					if (m > 1)
+						break;
+				}
+				if (m == 1)
+				{
+					quadro[l][c] = v;
+					return;
+				}
+			}
+		}
+	}
 }
 
 /* -----------------------------------------------------------------------------
@@ -435,7 +463,7 @@ void resolve_um_passo(char quadro[9][9])
 void salve_jogada_bin(FILE *fb, char quadro[9][9])
 {
 	// TODOs
-	fseek(fb, 0,SEEK_SET);
+	fseek(fb, 0, SEEK_SET);
 	fwrite(quadro, sizeof(char), 81, fb);
 }
 
@@ -509,10 +537,7 @@ void gen_random(char *s, const int len)
 	int i;
 
 	for (i = 0; i < len; ++i)
-	{
 		s[i] = alphanum[rand() % (sizeof(alphanum) - 1)];
-	}
-
 	s[len] = 0;
 }
 
