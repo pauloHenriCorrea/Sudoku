@@ -349,13 +349,15 @@ void jogue()
 
 		// carregue sudoku
 		case 1:
+		{
+
 			// FINALIZADO
 			fb = carregue(quadro);
 			if (fb == NULL)
 				fb = crie_arquivo_binario(quadro);
 
 			break;
-
+		}
 		// preencha quadro com um valor
 		case 2:
 		{
@@ -376,10 +378,13 @@ void jogue()
 
 		// resolva 1 passo
 		case 3:
+		{
+
 			resolve_um_passo(quadro);
 			salve_jogada_bin(fb, quadro);
 			puts("Um passo resolvido!");
 			break;
+		}
 
 		// resolva o sudoku completo
 		case 4:
@@ -430,7 +435,7 @@ void resolve_um_passo(char quadro[9][9])
 
 			int m, v;
 			m = v = 0;
-			
+
 			if (quadro[l][c] == 0)
 			{
 				// Para verificar quais valores podem ser inseridos na posicao quadro[l][c]
@@ -463,8 +468,29 @@ void resolve_um_passo(char quadro[9][9])
 void salve_jogada_bin(FILE *fb, char quadro[9][9])
 {
 	// TODOs
+	if (fb == NULL)
+	{
+		printf("Erro: O arquivo não foi aberto corretamente.\n");
+		return;
+	}
+
+	// Lê o número atual de jogadas no início do arquivo
+	int numero_jogadas = 0;
 	fseek(fb, 0, SEEK_SET);
+	fread(&numero_jogadas, sizeof(int), 1, fb);
+
+	// Incrementa o número de jogadas
+	numero_jogadas++;
+
+	// Posiciona o ponteiro no início para atualizar o número de jogadas
+	fseek(fb, 0, SEEK_SET);
+	fwrite(&numero_jogadas, sizeof(int), 1, fb);
+
+	// Move o ponteiro para o final do arquivo para adicionar o quadro atual
+	fseek(fb, 0, SEEK_END);
 	fwrite(quadro, sizeof(char), 81, fb);
+
+	printf("Estado do jogo salvo com sucesso! Total de jogadas: %d\n", numero_jogadas);
 }
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
