@@ -1,3 +1,7 @@
+# Pastas
 .vscode/
+bin/
+tests/
 
-sudoku.exe
+# Arquivos executáveis
+*.exe
