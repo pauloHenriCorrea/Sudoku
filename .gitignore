@@ -2,4 +2,4 @@
 .vscode/
 
 # Arquivos executáveis
-*.exe
+bins/*.bin

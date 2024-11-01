@@ -115,7 +115,7 @@ FILE *load(char frame[9][9])
 FILE *load_continue_game(char frame[9][9], char *file_name)
 {
 	FILE *f;
-	f = fopen(file_name, "rb");
+	f = fopen(file_name, "rb+");
 	if (f == NULL)
 	{
 		printf(ERROR_FILE_MSG);
@@ -150,12 +150,13 @@ void load_new_game(char frame[9][9], char *file_name)
  */
 FILE *create_binary_file(char frame[9][9])
 {
-	char folder_bin[20], file_name_bin[60] = URL_BINS;
-	gen_random(folder_bin, 5);
+	int numbers_plays = 0;
+	char folder_bin[20] = URL_BINS, file_name_bin[60];
+	gen_random(file_name_bin, 5);
 	strcat(folder_bin, file_name_bin);
 	strcat(folder_bin, ".bin");
 
-	FILE *fb = fopen(folder_bin, "wb");
+	FILE *fb = fopen(folder_bin, "wb+");
 
 	if (fb == NULL)
 	{
@@ -164,6 +165,10 @@ FILE *create_binary_file(char frame[9][9])
 	}
 	else
 	{
+		fseek(fb, 0, SEEK_SET);
+		fwrite(&numbers_plays, sizeof(int), 1, fb);
+		
+		fseek(fb, 1, SEEK_SET);
 		fwrite(frame, sizeof(char), 9 * 9, fb);
 		fclose(fb);
 	}
