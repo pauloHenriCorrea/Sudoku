@@ -1,7 +1,7 @@
 /* ALUNOS: ANA GRAZIELA MONTEIRO DOS SANTOS e PAULO HENRIQUE RODRIGUES CORRÊA
  * DISCIPLINA: ALGORITIMOS E PROGRAMAÇÃO II
  * PROFESSOR: ANDERSON BESSA
-*/
+ */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -17,8 +17,8 @@
 /* Definicoes de tipo */
 enum boolean
 {
-	TRUE = 0,
-	FALSE = 1
+	FALSE = 0,
+	TRUE = 1
 };
 
 /* Prototipos */
@@ -94,6 +94,7 @@ FILE *load(char frame[9][9])
 		strcat(folder_bin, file_name_bin);
 
 		// abre o arquivo binario já existente
+
 		f = load_continue_game(frame, folder_bin);
 		return f;
 
@@ -122,6 +123,7 @@ FILE *load_continue_game(char frame[9][9], char *file_name)
 	}
 	else
 	{
+		fseek(f, 4, SEEK_SET);
 		// ler o estado salvo do jogo do arquivo binario
 		fread(frame, sizeof(char), 81, f);
 	}
@@ -151,8 +153,11 @@ void load_new_game(char frame[9][9], char *file_name)
 FILE *create_binary_file(char frame[9][9])
 {
 	int numbers_plays = 0;
+
 	char folder_bin[20] = URL_BINS, file_name_bin[60];
+
 	gen_random(file_name_bin, 5);
+
 	strcat(folder_bin, file_name_bin);
 	strcat(folder_bin, ".bin");
 
@@ -167,10 +172,9 @@ FILE *create_binary_file(char frame[9][9])
 	{
 		fseek(fb, 0, SEEK_SET);
 		fwrite(&numbers_plays, sizeof(int), 1, fb);
-		
-		fseek(fb, 1, SEEK_SET);
-		fwrite(frame, sizeof(char), 9 * 9, fb);
-		fclose(fb);
+
+		fseek(fb, 0, SEEK_END);
+		fwrite(frame, sizeof(char), 81, fb);
 	}
 	return fb;
 }
