@@ -112,7 +112,6 @@ FILE *load(char frame[9][9])
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  * Carrega um estado de jogo a partir de um arquivo binario
- * Refazer, pois não está fuincionando 
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  */
 FILE *load_continue_game(char frame[9][9], char *file_name)
@@ -124,8 +123,14 @@ FILE *load_continue_game(char frame[9][9], char *file_name)
 		printf(ERROR_FILE_MSG);
 	}
 	else
-	{
-		// fseek(f, 4, SEEK_SET);
+	{	
+		int numbers_of_plays;
+		fseek(f, 0, SEEK_SET);
+		fread(&numbers_of_plays, sizeof(int), 1, f);
+
+		printf("Número total de jogadas: %d\n", numbers_of_plays);
+
+		fseek(f, 4, SEEK_SET);
 		// ler o estado salvo do jogo do arquivo binario
 		fread(frame, sizeof(char), 81, f);
 	}
@@ -134,7 +139,6 @@ FILE *load_continue_game(char frame[9][9], char *file_name)
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  * Carrega um novo jogo do Sudoku
- * Não mexer, está fuincionando corretamente 
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  */
 void load_new_game(char frame[9][9], char *file_name)
@@ -151,7 +155,6 @@ void load_new_game(char frame[9][9], char *file_name)
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  * Cria arquivo binario
- * Refazer, pois não está fuincionando 
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  */
 FILE *create_binary_file(char frame[9][9])
@@ -174,10 +177,10 @@ FILE *create_binary_file(char frame[9][9])
 	}
 	else
 	{
-		// fseek(fb, 0, SEEK_SET);
-		// fwrite(&numbers_plays, sizeof(int), 1, fb);
+		fseek(fb, 0, SEEK_SET);
+		fwrite(&numbers_plays, sizeof(int), 1, fb);
 
-		// fseek(fb, 0, SEEK_END);
+		fseek(fb, 4, SEEK_SET);
 		fwrite(frame, sizeof(char), 81, fb);
 	}
 	return fb;
@@ -185,7 +188,6 @@ FILE *create_binary_file(char frame[9][9])
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  * Dado as posicoes x e y, determina o quadrante do quadro
- * Não mexer, está fuincionando corretamente 
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  */
 int determine_quadrant(int x, int y)
@@ -212,7 +214,6 @@ int determine_quadrant(int x, int y)
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  * Determina se um valor na posicao x e y eh valido
- * Não mexer, está fuincionando corretamente 
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  */
 int is_valid(const char frame[9][9], int x, int y, int value)
@@ -229,7 +230,6 @@ int is_valid(const char frame[9][9], int x, int y, int value)
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  * Verifica se o valor na coluna y eh valido
- * Não mexer, está fuincionando corretamente 
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  */
 int is_valid_column(const char frame[9][9], int y, int value)
@@ -242,7 +242,6 @@ int is_valid_column(const char frame[9][9], int y, int value)
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  * Verifica se o valor na linha x eh valido
- * Não mexer, está fuincionando corretamente 
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  */
 int is_valid_line(const char frame[9][9], int x, int value)
@@ -255,7 +254,6 @@ int is_valid_line(const char frame[9][9], int x, int value)
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  * Verifica se o valor eh valido no quadrante da posicao x, y
- * Não mexer, está fuincionando corretamente 
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  */
 int is_valid_quadrant3x3(const char frame[9][9], int x, int y, int value)
@@ -285,7 +283,6 @@ int exist_empty_position(const char frame[9][9])
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  * Imprime o quadro recebido do sudoku
- * Não mexer, está fuincionando corretamente 
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  */
 void print(const char frame[9][9])
@@ -385,9 +382,18 @@ void play()
 		}
 
 		// resolve o sudoku completo
-		case 4:
+		case 4:{
+			int numbers_of_plays;
+
 			complete_solution(fb, frame);
+			
+			fseek(fb, 0, SEEK_SET);
+			fread(&numbers_of_plays, sizeof(int), 1, fb);
+			
+			printf("Número total de jogadas: %d\n", numbers_of_plays);
+			
 			break;
+		}
 
 		case 9:
 			fclose(fb);
@@ -403,7 +409,6 @@ void play()
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  * Resolve o sudoku
- * Não está fuincionando corretamente 
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  */
 void complete_solution(FILE *fb, char frame[9][9])
@@ -413,11 +418,11 @@ void complete_solution(FILE *fb, char frame[9][9])
 		solution_one_step(frame);
 		save_bin_move(fb, frame);
 	}
+	
 }
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  * Preenche apenas um campo vazio
- * Não mexer, está fuincionando corretamente 
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  */
 void solution_one_step(char frame[9][9])
@@ -460,7 +465,6 @@ void solution_one_step(char frame[9][9])
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  * Salva o estado atual do quadro no arquivo binario
- * Refazer, pois não está fuincionando 
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  */
 void save_bin_move(FILE *fb, char frame[9][9])
@@ -472,21 +476,20 @@ void save_bin_move(FILE *fb, char frame[9][9])
 	}
 
 	// // Leh o numero atual de jogadas no inicio do arquivo
-	// int numbers_of_plays = 0;
-	// fseek(fb, 0, SEEK_SET);
-	// fread(&numbers_of_plays, sizeof(int), 1, fb);
+	int numbers_of_plays = 0;
+	fseek(fb, 0, SEEK_SET);
+	fread(&numbers_of_plays, sizeof(int), 1, fb);
 
 	// // Incrementa o numero de jogadas
-	// numbers_of_plays++;
+	numbers_of_plays++;
 
 	// // Posiciona o ponteiro no inicio para atualizar o numero de jogadas
 	fseek(fb, 0, SEEK_SET);
-	// fwrite(&numbers_of_plays, sizeof(int), 1, fb);
+	fwrite(&numbers_of_plays, sizeof(int), 1, fb);
 
 	// // Move o ponteiro para o final do arquivo para adicionar o quadro atual
-	// fseek(fb, 0, SEEK_END);
+	fseek(fb, 4, SEEK_SET);
 	fwrite(frame, sizeof(char), 81, fb);
-	// printf("Estado do jogo salvo com sucesso! Total de jogadas: %d\n", numbers_of_plays);
 }
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -498,7 +501,6 @@ void save_bin_move(FILE *fb, char frame[9][9])
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  * Indice final da linha para o quadrante recebido como parametro
- * Não mexer, está fuincionando corretamente 
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  */
 int end_x(int quadrant)
@@ -522,7 +524,6 @@ int end_x(int quadrant)
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  * Indice final da coluna para o quadrante recebido como parametro
- * Não mexer, está fuincionando corretamente 
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  */
 int end_y(int quadrant)
@@ -546,7 +547,6 @@ int end_y(int quadrant)
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  * Gera uma cadeia de caracteres randomica de tamanho len
- * Não mexer, está fuincionando corretamente 
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  */
 void gen_random(char *s, const int len)
@@ -565,7 +565,6 @@ void gen_random(char *s, const int len)
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  * Indice inicial da linha para o quadrante recebido como parametro
- * Não mexer, está fuincionando corretamente 
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  */
 int ini_x(int quadrant)
@@ -589,7 +588,6 @@ int ini_x(int quadrant)
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  * Indice inicial da coluna para o quadrante recebido como parametro
- * Não mexer, está fuincionando corretamente 
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  */
 int ini_y(int quadrant)
@@ -613,7 +611,6 @@ int ini_y(int quadrant)
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  * Imprime a mensagem a faz a leitura da opcao
- * Não mexer, está fuincionando corretamente 
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  */
 int read_option()
@@ -628,7 +625,6 @@ int read_option()
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  * Imprime o menu de opcoes
- * Não mexer, está fuincionando corretamente 
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  */
 void menu()
@@ -644,7 +640,6 @@ void menu()
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  * Imprime o menu de opcoes do arquivo
- * Não mexer, está fuincionando corretamente 
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  */
 void file_menu()
