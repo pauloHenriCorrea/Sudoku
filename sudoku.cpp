@@ -56,8 +56,7 @@ int get_input(const char *prompt);
  * MAIN
  * /////////////////////////////////////////////////////////////////////////////
  */
-int main()
-{
+int main() {
 	// inicia o jogo
 	play();
 
@@ -69,8 +68,7 @@ int main()
  * Não mexer, está fuincionando corretamente
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  */
-FILE *load(char frame[9][9])
-{
+FILE *load(char frame[9][9]) {
 	char folder_txt[50] = URL_TXTS, file_name_txt[20], folder_bin[50] = URL_BINS, file_name_bin[20];
 	FILE *f = NULL;
 	int option;
@@ -78,8 +76,7 @@ FILE *load(char frame[9][9])
 	file_menu();
 	option = read_option();
 
-	switch (option)
-	{
+	switch (option) {
 
 	// carrega um novo sudoku
 	case 1:
@@ -122,22 +119,29 @@ FILE *load_continue_game(char frame[9][9], char *file_name)
 {
 	FILE *f;
 	f = fopen(file_name, "rb+");
+
 	if (f == NULL)
-	{
 		printf(ERROR_FILE_MSG);
-	}
-	else
-	{
-		int numbers_of_plays;
-		fseek(f, 0, SEEK_SET);
-		fread(&numbers_of_plays, sizeof(int), 1, f);
 
-		printf("Número total de jogadas: %d\n", numbers_of_plays);
+	int numbers_of_plays;
+	fseek(f, 0, SEEK_SET);
+	fread(&numbers_of_plays, sizeof(int), 1, f);
 
-		fseek(f, 4 + 81 * numbers_of_plays, SEEK_SET);
-		// ler o estado salvo do jogo do arquivo binario
-		fread(frame, sizeof(char), 81, f);
+	printf("Número total de jogadas: %d\n", numbers_of_plays);
+
+	int current_play = 0;
+
+	// Leitura e exibição de todos os quadros
+	while (fread(frame, sizeof(char), 81, f) == 81) {
+		printf("\nQuadro da Jogada %d:\n", current_play);
+		print(frame);
+		current_play++;
 	}
+
+	// ler o estado salvo do jogo do arquivo binario
+	fread(frame, sizeof(char), 81, f);
+
+
 	return f;
 }
 
@@ -518,8 +522,8 @@ void save_bin_move(FILE *fb, char frame[9][9])
 	fwrite(&numbers_of_plays, sizeof(int), 1, fb);
 
 	// // Move o ponteiro para o final do arquivo para adicionar o quadro atual
-	fseek(fb, 4 + 81 * numbers_of_plays, SEEK_SET);
-	fwrite(frame, sizeof(char), 81 * numbers_of_plays, fb);
+	fseek(fb, 0, SEEK_END);
+	fwrite(frame, sizeof(char), 81, fb);   
 }
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
