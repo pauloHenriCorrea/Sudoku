@@ -48,6 +48,10 @@ int ini_y(int quadrant);
 void menu();
 void file_menu();
 
+/* Funcoes auxiliares / Acrescentadas */
+bool valid_input(int x);
+int get_input(const char *prompt);
+
 /* /////////////////////////////////////////////////////////////////////////////
  * MAIN
  * /////////////////////////////////////////////////////////////////////////////
@@ -62,7 +66,7 @@ int main()
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  * Inicializa o SUDOKU a partir de um novo jogo ou estado de jogo anterior
- * Não mexer, está fuincionando corretamente 
+ * Não mexer, está fuincionando corretamente
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  */
 FILE *load(char frame[9][9])
@@ -123,14 +127,14 @@ FILE *load_continue_game(char frame[9][9], char *file_name)
 		printf(ERROR_FILE_MSG);
 	}
 	else
-	{	
+	{
 		int numbers_of_plays;
 		fseek(f, 0, SEEK_SET);
 		fread(&numbers_of_plays, sizeof(int), 1, f);
 
 		printf("Número total de jogadas: %d\n", numbers_of_plays);
 
-		fseek(f, 4, SEEK_SET);
+		fseek(f, 4 + 81 * numbers_of_plays, SEEK_SET);
 		// ler o estado salvo do jogo do arquivo binario
 		fread(frame, sizeof(char), 81, f);
 	}
@@ -163,7 +167,7 @@ FILE *create_binary_file(char frame[9][9])
 
 	char folder_bin[20] = URL_BINS, file_name_bin[60];
 
-	gen_random(file_name_bin, 5);
+	gen_random(file_name_bin, 4);
 
 	strcat(folder_bin, file_name_bin);
 	strcat(folder_bin, ".bin");
@@ -269,7 +273,7 @@ int is_valid_quadrant3x3(const char frame[9][9], int x, int y, int value)
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  * Verifica se existe um campo nao preenchido
- * Não mexer, está fuincionando corretamente 
+ * Não mexer, está fuincionando corretamente
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  */
 int exist_empty_position(const char frame[9][9])
@@ -287,7 +291,7 @@ int exist_empty_position(const char frame[9][9])
  */
 void print(const char frame[9][9])
 {
-	puts("    0 1 2   3 4 5   6 7 8");
+	puts("\n    0 1 2   3 4 5   6 7 8");
 	for (int i = 0; i < 9; i++)
 	{
 		if (i % 3 == 0)
@@ -326,8 +330,7 @@ void play()
 		{0, 0, 0, 0, 0, 0, 0, 0, 0},
 		{0, 0, 0, 0, 0, 0, 0, 0, 0},
 		{0, 0, 0, 0, 0, 0, 0, 0, 0},
-		{0, 0, 0, 0, 0, 0, 0, 0, 0}
-	};
+		{0, 0, 0, 0, 0, 0, 0, 0, 0}};
 	FILE *fb = NULL;
 
 	option = 0;
@@ -358,9 +361,10 @@ void play()
 		case 2:
 		{
 			int x, y, value;
-
-			printf("Entre com a posicao e o valor (linha, coluna, valor): ");
-			scanf("%d %d %d", &x, &y, &value);
+			printf("Entre com a posição e o valor!\n");
+			x = get_input("Linha: ");
+			y = get_input("Coluna: ");
+			value = get_input("Valor: ");
 
 			if (is_valid(frame, x, y, value))
 			{
@@ -377,21 +381,21 @@ void play()
 		{
 			solution_one_step(frame);
 			save_bin_move(fb, frame);
-			puts("Um passo resolvido!");
 			break;
 		}
 
 		// resolve o sudoku completo
-		case 4:{
+		case 4:
+		{
 			int numbers_of_plays;
 
 			complete_solution(fb, frame);
-			
+
 			fseek(fb, 0, SEEK_SET);
 			fread(&numbers_of_plays, sizeof(int), 1, fb);
-			
+
 			printf("Número total de jogadas: %d\n", numbers_of_plays);
-			
+
 			break;
 		}
 
@@ -408,6 +412,33 @@ void play()
 }
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ * Verifica se a entrada está dentro do intervalo válido (0 a 9)
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ */
+bool valid_input(int x)
+{
+	if (x < 0 || x > 9)
+	{
+		printf("Entrada inválida! Insira novamente.\n");
+		return false;
+	}
+	return true;
+}
+
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ * Exibe um prompt e recebe a entrada do usuário, validando-a até estar correta
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ */
+int get_input(const char *prompt) {
+    int input;
+    do {
+        printf("%s", prompt);
+        scanf("%d", &input);
+    } while (!valid_input(input));
+    return input;
+}
+
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  * Resolve o sudoku
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  */
@@ -418,7 +449,6 @@ void complete_solution(FILE *fb, char frame[9][9])
 		solution_one_step(frame);
 		save_bin_move(fb, frame);
 	}
-	
 }
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -488,8 +518,8 @@ void save_bin_move(FILE *fb, char frame[9][9])
 	fwrite(&numbers_of_plays, sizeof(int), 1, fb);
 
 	// // Move o ponteiro para o final do arquivo para adicionar o quadro atual
-	fseek(fb, 4, SEEK_SET);
-	fwrite(frame, sizeof(char), 81, fb);
+	fseek(fb, 4 + 81 * numbers_of_plays, SEEK_SET);
+	fwrite(frame, sizeof(char), 81 * numbers_of_plays, fb);
 }
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
